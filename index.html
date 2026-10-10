@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>DMBook</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+--bg:#ffffff;--bg2:#fbfbfb;--card:#ffffff;--tx:#201a10;--mut:#8a7a5f;--line:#ece6d8;
+--ac:#d98c2b;--ac2:#f0b84f;--ok:#4d8c3f;--bad:#c4502f;--warn:#c4792a;--shadow:0 1px 2px #6b4f1708,0 6px 18px -8px #6b4f1714}
+:root[data-theme="dark"]{--bg:#ffffff;--bg2:#fbfbfb;--card:#ffffff;--tx:#201a10;--mut:#8a7a5f;--line:#ece6d8;--ac:#d98c2b;--ac2:#f0b84f;--ok:#4d8c3f;--bad:#c4502f;--warn:#c4792a;--shadow:0 1px 2px #6b4f1708,0 6px 18px -8px #6b4f1714}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line);background:var(--card)}
+h1{font-size:18px;margin:0;letter-spacing:-.2px}h1 small{display:block;font-weight:400;color:var(--mut);font-size:12px;margin-top:2px}
+.tools{display:flex;gap:8px;flex-wrap:wrap}
+button,select,input,textarea{font:inherit;color:var(--tx)}
+button{background:var(--card);border:1px solid var(--line);border-radius:9px;padding:7px 12px;cursor:pointer;transition:.12s}
+button.p{background:var(--ac);border-color:var(--ac);color:#fff;font-weight:600}
+button:hover{filter:brightness(.97)}button:active{transform:scale(.97)}
+#alerts{padding:0 20px}
+.al{margin-top:10px;padding:9px 13px;border-radius:10px;background:color-mix(in srgb,var(--warn) 14%,var(--card));border:1px solid color-mix(in srgb,var(--warn) 55%,transparent);font-size:13px;box-shadow:var(--shadow)}
+main{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:18px 20px 32px}
+@media(max-width:900px){main{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){main{grid-template-columns:1fr;padding:14px}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:9px;min-width:0;box-shadow:var(--shadow);cursor:pointer;transition:.14s}
+.card:hover{transform:translateY(-2px);box-shadow:0 2px 4px #1c243010,0 14px 28px -10px #1c243026}
+.card h2{font-size:15px;margin:0;display:flex;align-items:center;gap:7px}
+.card .sub{color:var(--mut);font-size:12px;margin-top:-5px}
+.body{flex:1;font-size:13px;display:flex;flex-direction:column;gap:6px}
+.chart-wrap{margin:2px 0 2px;border-radius:10px;display:flex;align-items:center;justify-content:center;min-height:126px}
+.acts{display:flex;gap:7px;flex-wrap:wrap}.acts button{font-size:12px;padding:6px 10px;flex:1}
+.bar{height:6px;background:var(--line);border-radius:4px;overflow:hidden}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--ac2),var(--ac))}
+.mut{color:var(--mut)}.ok{color:var(--ok)}.bad{color:var(--bad)}
+.row{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.row input[type=number]{width:72px}
+input,select,textarea{background:var(--bg2);border:1px solid var(--line);border-radius:9px;padding:8px 10px;width:100%}
+textarea{resize:vertical;font-family:inherit}
+.row input[type=checkbox]{width:auto}
+#modal{position:fixed;inset:0;background:#000a;display:none;align-items:center;justify-content:center;padding:16px;z-index:20}
+#modal.on{display:flex}
+.box{background:var(--card);border-radius:16px;padding:18px;width:100%;max-width:460px;max-height:90vh;overflow:auto;display:flex;flex-direction:column;gap:11px;box-shadow:var(--shadow)}
+.box h3{margin:0;font-size:16px}label{font-size:12px;color:var(--mut);display:block;margin-bottom:3px}
+.hist{border-top:1px solid var(--line);padding:8px 0;font-size:13px}
+.big{font-size:22px;font-weight:700}
+#detail{position:fixed;inset:0;background:var(--bg);z-index:15;display:none;flex-direction:column;overflow:hidden}
+#detail.on{display:flex}
+.dhead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px 20px;padding-top:calc(16px + env(safe-area-inset-top,0px));border-bottom:1px solid var(--line);background:var(--card)}
+.dhead h2{margin:0;font-size:17px}.dhead .sub{color:var(--mut);font-size:12px;margin-top:2px}
+.xbtn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:17px;flex:none}
+.dbody{flex:1;overflow:auto;padding:18px 20px 40px}
+.dgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-bottom:16px}
+.stat{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;box-shadow:var(--shadow)}
+.stat .l{font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.3px}
+.stat .v{font-size:21px;font-weight:700;margin-top:3px}
+.chartcard{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:16px;box-shadow:var(--shadow)}
+.chartcard h4{margin:0 0 10px;font-size:13px;color:var(--mut);font-weight:600}
+.rangebar{margin-bottom:14px}
+.rangepanel{display:none;margin-top:8px;gap:8px;align-items:end;flex-wrap:wrap}
+.rangepanel.on{display:flex}
+.rangepanel>div{min-width:140px}
+.qmitem{display:flex;justify-content:space-between;gap:8px;padding:5px 0;border-bottom:1px solid var(--line);font-size:13px}
+.qmitem:last-child{border-bottom:none}
+</style>
+</head>
+<body>
+<header>
+ <h1>DMBook<small>CONTROL CENTER · <span id="today"></span> · Local-first, ngoại tuyến</small></h1>
+ <div class="tools">
+  <button onclick="backup()">⬇ Sao lưu</button>
+  <button onclick="document.getElementById('imp').click()">⬆ Khôi phục (gộp)</button>
+  <input type="file" id="imp" accept=".json" hidden>
+ </div>
+</header>
+<div id="alerts"></div>
+<main id="grid"></main>
+<div id="detail"><div class="dhead"><div><h2 id="dtitle"></h2><div class="sub" id="dsub"></div></div><button class="xbtn" onclick="closeDetail()">✕</button></div><div class="dbody" id="dbody"></div></div>
+<div id="modal"><div class="box" id="box"></div></div>
+<script>
+const KEY='personal_os_v1';
+let db={goals:[],health:[],meals:[],workouts:[],moods:[],journal:[],tasks:[],screen:[],sitting:[],tx:[]};
+try{const s=localStorage.getItem(KEY);if(s)db=Object.assign(db,JSON.parse(s));}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db));}catch(e){}}
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const iso=d=>d.toISOString();
+const rid=()=>Math.random().toString(36).slice(2,10);
+const dstr=d=>new Date(d).toLocaleDateString('sv-SE');
+const todayS=dstr(new Date());
+const vnd=n=>Math.round(n).toLocaleString('vi-VN')+' ₫';
+const isToday=r=>dstr(r.at)===todayS;
+const weekAgo=Date.now()-7*864e5;
+const PALETTE=['#2f6fed','#1f9d55','#e2574c','#8b5cf6','#f59e0b','#06b6d4'];
+const REF={weight:64,height:174,bmi:(64/(1.74*1.74)).toFixed(1),kcal:2450,protein:100,waer:'150–300 phút cường độ vừa/tuần (hoặc 75–150 phút cường độ mạnh) + tập kháng lực ≥2 buổi/tuần'};
+
+// ---- khoảng thời gian xem (mặc định: hôm nay) ----
+let curRange={from:todayS,to:todayS};
+function clampRange(f,t){if(f>t)[f,t]=[t,f];const d=(new Date(t)-new Date(f))/864e5;if(d>60)t=dstr(+new Date(f)+60*864e5);return{from:f,to:t}}
+function datesInRange(from,to){const a=[];let d=new Date(from);const end=new Date(to);let n=0;while(dstr(d)<=dstr(end)&&n<61){a.push(dstr(d));d=new Date(+d+864e5);n++}return a}
+function inRange(at){const d=dstr(at);return d>=curRange.from&&d<=curRange.to}
+function rangeLabel(){return curRange.from===curRange.to?(curRange.from===todayS?'Hôm nay':curRange.from):curRange.from+' → '+curRange.to}
+function toggleRangePicker(){const p=$('rangePanel');if(p)p.classList.toggle('on')}
+function applyRange(){const f=$('rFrom').value,t=$('rTo').value;if(!f||!t)return;curRange=clampRange(f,t);openDetail(curDetail)}
+function resetRange(){curRange={from:todayS,to:todayS};openDetail(curDetail)}
+function rangeBarHTML(){
+ return `<div class="rangebar"><button onclick="toggleRangePicker()">📅 ${esc(rangeLabel())}</button>
+  <div class="rangepanel on" id="rangePanel">
+   <div><label>Từ ngày</label><input type="date" id="rFrom" value="${curRange.from}"></div>
+   <div><label>Đến ngày</label><input type="date" id="rTo" value="${curRange.to}"></div>
+   <button class="p" onclick="applyRange()">Áp dụng</button>
+   <button onclick="resetRange()">Hôm nay</button>
+  </div></div>`;
+}
+$('today').textContent=new Date().toLocaleDateString('vi-VN',{weekday:'long',day:'numeric',month:'numeric',year:'numeric'});
+
+// ---- mini SVG charts (no external lib) ----
+function miniBar(data,color){
+ if(!data.length)return '';
+ const w=280,h=56,max=Math.max(...data,1),bw=w/data.length;
+ return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="56" preserveAspectRatio="none">`+data.map((v,i)=>{const bh=Math.max(2,v/max*(h-6));return `<rect x="${i*bw+bw*0.15}" y="${h-bh}" width="${bw*0.7}" height="${bh}" rx="3" fill="${color}"/>`}).join('')+`</svg>`;
+}
+function miniLine(series,w=280,h=56){
+ const all=series.flatMap(s=>s.data);
+ if(all.length<2)return '';
+ const max=Math.max(...all),min=Math.min(...all),range=(max-min)||1;
+ const n=Math.max(...series.map(s=>s.data.length));
+ const poly=s=>s.data.map((v,i)=>`${i/(n-1)*w},${h-5-(v-min)/range*(h-10)}`).join(' ');
+ return `<svg viewBox="0 0 ${w} ${h}" width="100%" height="${h}" preserveAspectRatio="none">`+series.map(s=>`<polyline points="${poly(s)}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`).join('')+`</svg>`;
+}
+function legend(items){return `<div style="display:flex;gap:14px;font-size:11px;color:var(--mut);margin-top:6px;flex-wrap:wrap">`+items.map(([c,l])=>`<span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:${c};margin-right:4px"></span>${l}</span>`).join('')+`</div>`}
+function donutChart(slices,size=150){
+ const total=slices.reduce((s,x)=>s+x.v,0)||1;const r=size/2-10,cx=size/2,cy=size/2,circ=2*Math.PI*r;let off=0;
+ const arcs=slices.map(s=>{const len=s.v/total*circ;const el=`<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.c}" stroke-width="18" stroke-dasharray="${len} ${circ-len}" stroke-dashoffset="${-off}" transform="rotate(-90 ${cx} ${cy})"/>`;off+=len;return el}).join('');
+ return `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">${arcs}</svg>`;
+}
+function ringsChart(items,size=160){
+ const cx=size/2,cy=size/2,maxR=size/2-8,step=maxR/Math.max(items.length,1);
+ const rings=items.map((it,i)=>{const r=maxR-i*step*0.82;const circ=2*Math.PI*r;const len=Math.max(0,Math.min(100,it.pct))/100*circ;
+  return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--line)" stroke-width="${step*0.55}"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${it.c}" stroke-width="${step*0.55}" stroke-linecap="round" stroke-dasharray="${len} ${circ-len}" transform="rotate(-90 ${cx} ${cy})"/>`}).join('');
+ return `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}">${rings}</svg>`;
+}
+function progressRing(p,color,size=112){
+ p=Math.max(0,Math.min(100,p||0));const r=size/2-11,cx=size/2,cy=size/2,circ=2*Math.PI*r,len=p/100*circ;
+ return `<svg viewBox="0 0 ${size} ${size}" width="${size}" height="${size}"><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--line)" stroke-width="11"/><circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="11" stroke-linecap="round" stroke-dasharray="${len} ${circ-len}" transform="rotate(-90 ${cx} ${cy})"/><text x="${cx}" y="${cy+6}" text-anchor="middle" font-size="20" font-weight="700" fill="var(--tx)">${Math.round(p)}%</text></svg>`;
+}
+
+// ---- bảng tra cứu kcal món ăn Việt phổ biến (ước tính cục bộ, offline) ----
+const FOODDB={
+ 'cơm tấm':{kcal:600,unit:'phần'},'cơm':{kcal:260,unit:'bát'},
+ 'thịt kho':{per100g:250},'thịt bò':{per100g:250},'thịt gà':{per100g:200},'thịt heo':{per100g:260},
+ 'cá kho':{per100g:180},'cá':{per100g:150},'tôm':{per100g:100},
+ 'rau cải thìa luộc':{kcal:20,unit:'bát'},'rau muống luộc':{kcal:25,unit:'bát'},'rau muống xào':{kcal:120,unit:'phần'},'rau luộc':{kcal:25,unit:'bát'},
+ 'canh chua':{kcal:60,unit:'bát'},'canh rau':{kcal:40,unit:'bát'},
+ 'trứng chiên':{kcal:90,unit:'quả'},'trứng luộc':{kcal:70,unit:'quả'},'trứng':{kcal:70,unit:'quả'},
+ 'đậu phụ':{per100g:80},'tàu hũ':{per100g:80},'khoai lang':{per100g:120},
+ 'nước c2':{kcal:140,unit:'chai'},'c2':{kcal:140,unit:'chai'},'trà sữa':{kcal:300,unit:'ly'},
+ 'phở bò':{kcal:400,unit:'tô'},'phở gà':{kcal:380,unit:'tô'},'phở':{kcal:400,unit:'tô'},
+ 'bún chả':{kcal:450,unit:'phần'},'bún bò':{kcal:420,unit:'tô'},'bún':{kcal:350,unit:'tô'},
+ 'xôi':{kcal:350,unit:'gói'},'bánh mì':{kcal:300,unit:'ổ'},'mì gói':{kcal:380,unit:'gói'},'gà rán':{kcal:250,unit:'miếng'},
+ 'sữa chua':{kcal:100,unit:'hộp'},'chuối':{kcal:90,unit:'quả'},'sữa tươi':{kcal:150,unit:'ly'},
+ 'cà phê sữa':{kcal:120,unit:'ly'},'cà phê đen':{kcal:5,unit:'ly'},
+ 'nước ngọt':{kcal:150,unit:'lon'},'coca':{kcal:150,unit:'lon'},'pepsi':{kcal:150,unit:'lon'},'nước suối':{kcal:0,unit:'chai'}
+};
+function normalizeNum(s){if(/nửa|1\/2/.test(s))return 0.5;if(/rưỡi/.test(s))return 1.5;const m=s.match(/\d+([.,]\d+)?/);return m?parseFloat(m[0].replace(',','.')):1;}
+function findFood(low){const keys=Object.keys(FOODDB).sort((a,b)=>b.length-a.length);for(const k of keys){if(low.includes(k))return k;}return null;}
+function parseFoodText(text){
+ const clauses=text.split(/[,;\n]+/).map(s=>s.trim()).filter(Boolean);
+ const items=clauses.map(raw=>{
+  const low=raw.toLowerCase();const key=findFood(low);
+  if(!key)return{raw,matched:null,kcal:0};
+  const food=FOODDB[key];let kcal=0;
+  if(food.per100g){const g=low.match(/(\d+)\s*g\b/);const grams=g?parseFloat(g[1]):100*normalizeNum(low);kcal=Math.round(grams/100*food.per100g);}
+  else{kcal=Math.round(normalizeNum(low)*food.kcal);}
+  return{raw,matched:key,kcal};
+ });
+ return{items,total:items.reduce((s,i)=>s+i.kcal,0)};
+}
+function openQuickMeal(){
+ openBox(`<h3>Nhập nhanh bữa ăn (tự ước tính kcal)</h3>
+  <div><label>Loại bữa</label><select id="qmMeal"><option>Sáng</option><option>Trưa</option><option>Tối</option><option>Phụ</option></select></div>
+  <div><label>Mô tả những gì đã ăn/uống (mỗi món cách nhau bằng dấu phẩy)</label><textarea id="qmText" rows="4" placeholder="VD: 6 bát cơm, 200g thịt kho, nửa bát rau cải thìa luộc, 1 chai nước C2"></textarea></div>
+  <button onclick="parseQuickMeal()">⚡ Tính kcal tự động</button>
+  <div id="qmResult"></div>
+  <div><label>Tổng kcal (có thể chỉnh tay nếu ước tính chưa đúng)</label><input type="number" id="qmTotal" value="0"></div>
+  <div class="row"><button onclick="closeBox()">Hủy</button><button class="p" onclick="saveQuickMeal()">Lưu</button></div>
+  <div class="mut" style="font-size:11px">Ước tính dựa trên bảng tra cứu món ăn phổ biến có sẵn ngay trong máy (không gửi dữ liệu đi đâu cả) — không chính xác tuyệt đối như cân đo, hãy chỉnh tay nếu cần.</div>`);
+}
+function parseQuickMeal(){
+ const r=parseFoodText($('qmText').value);
+ $('qmResult').innerHTML=r.items.map(it=>`<div class="qmitem"><span>${it.matched?'✅':'❓'} ${esc(it.raw)}</span><b>${it.matched?it.kcal+' kcal':'chưa nhận diện — tự điền'}</b></div>`).join('')||'<div class="mut">Chưa có nội dung.</div>';
+ $('qmTotal').value=r.total;
+}
+function saveQuickMeal(){
+ const meal=$('qmMeal').value,total=+$('qmTotal').value||0,text=$('qmText').value.trim();
+ if(!text){alert('Hãy nhập mô tả bữa ăn');return}
+ db.meals.push({id:rid(),at:iso(new Date()),meal,name:text,kcal:total});
+ save();closeBox();render();if($('detail').classList.contains('on'))openDetail(curDetail);
+}
+// ---- quan sát ngồi lâu & stress (không khẳng định nhân quả) ----
+function sittingMoodNote(){
+ const pairs=[];db.moods.forEach(m=>{const d=dstr(m.at);const s=db.sitting.filter(r=>dstr(r.at)===d);if(s.length)pairs.push({sit:sum(s,'min'),stress:+m.stress||0})});
+ if(pairs.length<5)return '';
+ const avgSit=pairs.reduce((s,p)=>s+p.sit,0)/pairs.length;
+ const high=pairs.filter(p=>p.sit>avgSit),low=pairs.filter(p=>p.sit<=avgSit);
+ if(!high.length||!low.length)return '';
+ const avgHigh=(high.reduce((s,p)=>s+p.stress,0)/high.length).toFixed(1);
+ const avgLow=(low.reduce((s,p)=>s+p.stress,0)/low.length).toFixed(1);
+ return `<div class="chartcard"><h4>Quan sát: thời gian ngồi &amp; stress (${pairs.length} ngày có cả 2 dữ liệu)</h4><div class="mut" style="font-size:13px">Những ngày ngồi liên tục nhiều hơn mức trung bình, stress tự đánh giá trung bình ${avgHigh}/10 — so với ${avgLow}/10 ở những ngày ngồi ít hơn. Đây là tương quan quan sát được, không phải bằng chứng nhân quả.</div></div>`;
+}
+
+// Cấu hình biểu mẫu theo từng bộ sưu tập
+const F={
+ goals:{label:'Mục tiêu',f:[['name','Tên mục tiêu','text',1],['target','Giá trị mục tiêu','number',1],['unit','Đơn vị đo (giờ, đồng, %, lần…)','text',1],['current','Tiến độ hiện tại','number',0],['due','Ngày kết thúc','date',1]],fmt:r=>`${esc(r.name)} — ${r.current||0}/${r.target} ${esc(r.unit)} (hạn ${r.due})`},
+ health:{label:'Chỉ số sức khỏe',f:[['type','Loại chỉ số','select',1,['Cân nặng (kg)','Nhịp tim nghỉ (bpm)','Giấc ngủ (giờ)','Số bước','Huyết áp','SpO₂ (%)','Khác']],['value','Giá trị','text',1],['src','Nguồn dữ liệu','select',1,['Thủ công','Thiết bị','Nhập tệp']],['note','Ghi chú','text',0]],fmt:r=>`${esc(r.type)}: <b>${esc(r.value)}</b> · ${esc(r.src)}`},
+ meals:{label:'Bữa ăn',f:[['meal','Loại bữa','select',1,['Sáng','Trưa','Tối','Phụ']],['name','Tên món','text',1],['kcal','Năng lượng (kcal, nếu biết)','number',0]],fmt:r=>`${esc(r.meal)}: ${esc(r.name)}${r.kcal?' · '+r.kcal+' kcal':''}`},
+ workouts:{label:'Buổi tập',f:[['type','Loại hình','select',1,['Đi bộ','Chạy','Gym','Đạp xe','Thể thao','Khác']],['min','Thời lượng thực tế (phút)','number',1],['rpe','Cường độ tự đánh giá (1–10)','number',0]],fmt:r=>`${esc(r.type)} · ${r.min} phút`},
+ moods:{label:'Check-in tâm trạng',f:[['mood','Tâm trạng (1–5)','number',1],['stress','Stress tự đánh giá (0–10)','number',1],['cause','Nguyên nhân','select',0,['Công việc','Học tập','Tài chính','Quan hệ','Sức khỏe','Khác']],['prayer','Hôm nay có đi lễ/cầu nguyện không?','select',0,['Có','Không']],['peace','Cảm thấy tâm bình an?','select',0,['Có','Một phần','Không']],['note','Ghi chú riêng tư','text',0]],fmt:r=>`Tâm trạng ${r.mood}/5 · stress ${r.stress}/10${r.cause?' · '+esc(r.cause):''}${r.prayer?' · Lễ/cầu nguyện: '+esc(r.prayer):''}${r.peace?' · Bình an: '+esc(r.peace):''}`},
+ journal:{label:'Nhật ký tâm sự (riêng tư)',f:[['text','Bạn đang nghĩ gì? (chỉ lưu trên máy này, không gửi đi đâu)','textarea',1]],fmt:r=>`"${esc(r.text)}"`},
+ tasks:{label:'Nhiệm vụ',f:[['name','Tên nhiệm vụ','text',1],['due','Deadline','date',0],['prio','Ưu tiên','select',1,['Trung bình','Thấp','Cao','Khẩn cấp']],['est','Ước tính (phút)','number',0]],fmt:r=>`${r.done?'✓ ':''}${esc(r.name)}${r.due?' · hạn '+r.due:''} · ${esc(r.prio)}`},
+ screen:{label:'Thời gian màn hình',f:[['min','Tổng thời gian (phút)','number',1],['src','Nguồn','select',1,['Tự ghi nhận','Nhập từ hệ điều hành (Screen Time/Digital Wellbeing)']]],fmt:r=>`${r.min} phút · ${esc(r.src)}`},
+ sitting:{label:'Thời gian ngồi liên tục',f:[['min','Số phút ngồi liên tục (ước tính)','number',1],['note','Ghi chú (vd: làm việc, học bài)','text',0]],fmt:r=>`Ngồi liên tục: ${r.min} phút${r.note?' · '+esc(r.note):''}`},
+ tx:{label:'Giao dịch',f:[['kind','Loại','select',1,['Chi','Thu']],['amount','Số tiền (VND)','number',1],['cat','Danh mục','text',1],['desc','Mô tả','text',0]],fmt:r=>`<span class="${r.kind==='Thu'?'ok':'bad'}">${r.kind==='Thu'?'+':'−'}${vnd(r.amount)}</span> · ${esc(r.cat)}${r.desc?' · '+esc(r.desc):''}`}
+};
+
+const sum=(a,k)=>a.reduce((s,r)=>s+(+r[k]||0),0);
+function lastNDays(n){return[...Array(n)].map((_,i)=>dstr(Date.now()-(n-1-i)*864e5))}
+
+const M=[
+ {id:'m1',t:'01. Quản lý bản thân',s:'Mục tiêu, tiến độ, phát triển cá nhân',c:['goals'],noRange:true,
+  mini:()=>{const a=db.goals;const avg=a.length?Math.round(sum(a.map(g=>({v:pct(g)})),'v')/a.length):0;return progressRing(avg,PALETTE[0]);},
+  v:(full)=>{const a=full?db.goals:db.goals.slice(-4);if(!db.goals.length)return'<span class="mut">Chưa có mục tiêu.</span>';
+   return a.map(g=>`<div><div class="row"><span>${esc(g.name)}</span><span><input type="number" value="${g.current||0}" onchange="upd('goals','${g.id}','current',this.value)"> / ${g.target} ${esc(g.unit)}</span></div><div class="bar"><i style="width:${pct(g)}%"></i></div></div>`).join('')},
+  stats:()=>[['Mục tiêu đang thực hiện',db.goals.filter(g=>pct(g)<100).length],['Đã hoàn thành',db.goals.filter(g=>pct(g)>=100).length],['Tiến độ TB',db.goals.length?Math.round(sum(db.goals.map(g=>({v:pct(g)})),'v')/db.goals.length)+'%':'—']],
+  chart:()=>{const a=db.goals.slice(-8);if(!a.length)return'';
+   const rings=a.slice(-5).map((g,i)=>({pct:pct(g),c:PALETTE[i%PALETTE.length]}));
+   return `<div class="chartcard"><h4>Tiến độ theo mục tiêu (%)</h4><div class="chart-wrap">${miniBar(a.map(pct),PALETTE[0])}</div></div>`+
+    `<div class="chartcard" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div><h4 style="margin-bottom:10px">Các mục tiêu lồng vào nhau</h4>${ringsChart(rings)}</div>${legend(a.slice(-5).map((g,i)=>[PALETTE[i%PALETTE.length],g.name+' ('+pct(g)+'%)']))}</div>`}},
+ {id:'m2',t:'02. Quản lý sức khỏe',s:'Chỉ số cơ thể, giấc ngủ, thiết bị',c:['health'],
+  mini:()=>{const d=lastNDays(7);const done=d.filter(d=>db.health.some(r=>dstr(r.at)===d)).length;return progressRing(done/7*100,PALETTE[5]);},
+  v:(full)=>{const src=full?db.health.filter(r=>inRange(r.at)):db.health;const seen={},o=[];[...src].reverse().forEach(r=>{if(!seen[r.type]){seen[r.type]=1;o.push(r)}});
+   return o.length?o.slice(0,full?999:5).map(r=>`<div class="row"><span>${esc(r.type)}</span><span><b>${esc(r.value)}</b> <span class="mut">${new Date(r.at).toLocaleDateString('vi-VN')}</span></span></div>`).join('')+'<div class="mut">Ghi nhận theo dõi, không thay thế chẩn đoán y tế.</div>':'<span class="mut">Chưa có chỉ số trong khoảng đã chọn.</span>'},
+  stats:()=>{const rec=db.health.filter(r=>inRange(r.at));const g={};rec.forEach(r=>(g[r.type]=g[r.type]||[]).push(r));const days=datesInRange(curRange.from,curRange.to);const full=days.filter(d=>rec.some(r=>dstr(r.at)===d)).length;
+   return[['Độ đầy đủ dữ liệu',full+'/'+days.length+' ngày'],...Object.entries(g).slice(0,2).map(([t,a])=>[t,a[a.length-1].value])]},
+  chart:()=>{const rec=db.health.filter(r=>inRange(r.at));const g={};rec.forEach(r=>(g[r.type]=g[r.type]||[]).push(r));const top=Object.entries(g).sort((a,b)=>b[1].length-a[1].length)[0];if(!top)return'<div class="mut">Chưa có dữ liệu để vẽ biểu đồ trong khoảng đã chọn.</div>';const vals=top[1].map(r=>parseFloat(r.value)).filter(v=>!isNaN(v));if(vals.length<2)return'';return `<div class="chartcard"><h4>Xu hướng: ${esc(top[0])}</h4><div class="chart-wrap">${miniLine([{data:vals,color:PALETTE[5]}])}</div></div>`}},
+ {id:'m3',t:'03. Ăn uống & tập luyện',s:'Bữa ăn, dinh dưỡng, vận động',c:['meals','workouts'],quickAdd:true,
+  mini:()=>{const k=sum(db.meals.filter(isToday),'kcal');return progressRing(k/REF.kcal*100,PALETTE[2]);},
+  v:(full)=>{const m=full?db.meals.filter(r=>inRange(r.at)):db.meals.filter(isToday),w=full?db.workouts.filter(r=>inRange(r.at)):db.workouts.filter(r=>new Date(r.at)>weekAgo);
+   const list=full?m.slice().reverse():m.slice(-3);
+   return `<div class="row"><span>Bữa ăn</span><b>${m.length}</b></div><div class="row"><span>Kcal</span><b>${sum(m,'kcal')}</b></div><div class="row"><span>Vận động</span><b>${sum(w,'min')} phút</b></div><div class="row"><span>Số buổi tập</span><b>${w.length}</b></div>`+(list.map(r=>`<div class="mut">${F.meals.fmt(r)}</div>`).join(''))},
+  stats:()=>{const m=db.meals.filter(r=>inRange(r.at)),w=db.workouts.filter(r=>inRange(r.at));return[['Kcal trong khoảng',sum(m,'kcal')],['Phút vận động',sum(w,'min')],['Số buổi tập',w.length]]},
+  chart:()=>{const days=datesInRange(curRange.from,curRange.to);const k=days.map(d=>sum(db.meals.filter(r=>dstr(r.at)===d),'kcal')),mn=days.map(d=>sum(db.workouts.filter(r=>dstr(r.at)===d),'min'));
+   const ref=`<div class="chartcard"><h4>Tham chiếu chuẩn chung (64kg/174cm, giả định nam 30 tuổi, vận động vừa — có thể điều chỉnh)</h4><div class="dgrid" style="margin-bottom:0"><div class="stat"><div class="l">BMI</div><div class="v">${REF.bmi}</div></div><div class="stat"><div class="l">Năng lượng duy trì/ngày</div><div class="v">~${REF.kcal} kcal</div></div><div class="stat"><div class="l">Đạm mục tiêu/ngày</div><div class="v">~${REF.protein} g</div></div><div class="stat"><div class="l">Vận động khuyến nghị (WHO)</div><div class="v" style="font-size:13px;font-weight:600">${REF.waer}</div></div></div></div>`;
+   return ref+`<div class="chartcard"><h4>Kcal theo ngày</h4><div class="chart-wrap">${miniBar(k,PALETTE[2])}</div></div><div class="chartcard"><h4>Phút vận động theo ngày</h4><div class="chart-wrap">${miniBar(mn,PALETTE[1])}</div></div>`}},
+ {id:'m4',t:'04. Stress & tinh thần',s:'Tâm trạng, áp lực, phục hồi, nhật ký',c:['moods','journal'],
+  mini:()=>{const d=lastNDays(7);const done=d.filter(d=>db.moods.some(r=>dstr(r.at)===d)).length;return progressRing(done/7*100,PALETTE[1]);},
+  v:(full)=>{const src=full?db.moods.filter(r=>inRange(r.at)):db.moods;const a=full?src.slice().reverse():src.slice(-7);
+   const jr=full?db.journal.filter(r=>inRange(r.at)).slice().reverse():[];
+   const jh=jr.length?`<div class="mut" style="margin-top:8px;font-weight:600">Nhật ký tâm sự trong khoảng</div>`+jr.map(r=>`<div class="mut">${F.journal.fmt(r)} <span style="font-size:11px">(${new Date(r.at).toLocaleDateString('vi-VN')})</span></div>`).join(''):'';
+   if(src.length<3)return`<span class="mut">Cần thêm dữ liệu để nhận xét xu hướng (${src.length}/3 check-in).</span>`+(a.length?a.map(r=>`<div>${F.moods.fmt(r)}</div>`).join(''):'')+jh;
+   const av=k=>(sum(src,k)/src.length).toFixed(1);return`<div class="row"><span>Tâm trạng TB</span><b>${av('mood')}/5</b></div><div class="row"><span>Stress TB</span><b>${av('stress')}/10</b></div><div class="mut">Tương quan quan sát được không phải bằng chứng nhân quả.</div>`+a.map(r=>`<div class="mut">${F.moods.fmt(r)}</div>`).join('')+jh},
+  stats:()=>{const a=db.moods.filter(r=>inRange(r.at));const peace=a.filter(r=>r.peace==='Có').length;return a.length?[['Tâm trạng TB',(sum(a,'mood')/a.length).toFixed(1)+'/5'],['Stress TB',(sum(a,'stress')/a.length).toFixed(1)+'/10'],['Số ngày thấy bình an',peace+'/'+a.length]]:[['Số check-in',0]]},
+  chart:()=>{const a=db.moods.filter(r=>inRange(r.at));let c=sittingMoodNote();if(a.length<2)return(c||'<div class="mut">Cần ít nhất 2 check-in trong khoảng đã chọn để vẽ biểu đồ.</div>');return `<div class="chartcard"><h4>Tâm trạng &amp; Stress</h4><div class="chart-wrap">${miniLine([{data:a.map(r=>r.mood),color:PALETTE[1]},{data:a.map(r=>r.stress/2),color:PALETTE[2]}])}</div>${legend([[PALETTE[1],'Tâm trạng (1–5)'],[PALETTE[2],'Stress (0–10, chia đôi)']])}</div>`+c}},
+ {id:'m5',t:'05. Công việc & thời gian',s:'Đầu việc, lịch, thời gian màn hình, thời gian ngồi',c:['tasks','screen','sitting'],
+  mini:()=>{const done=db.tasks.filter(t=>t.done).length,open=db.tasks.filter(t=>!t.done).length;return(done+open)?donutChart([{v:done,c:PALETTE[1]},{v:open,c:PALETTE[0]}],112):progressRing(0,PALETTE[0]);},
+  v:(full)=>{const o=full?db.tasks.filter(t=>!t.done).concat(db.tasks.filter(t=>t.done)):db.tasks.filter(t=>!t.done).slice(-5);
+   const sc=full?sum(db.screen.filter(r=>inRange(r.at)),'min'):sum(db.screen.filter(isToday),'min');
+   const sit=full?sum(db.sitting.filter(r=>inRange(r.at)),'min'):sum(db.sitting.filter(isToday),'min');
+   return `<div class="row"><span>Màn hình${full?' (khoảng đã chọn)':' hôm nay'}</span><b>${Math.floor(sc/60)}g ${sc%60}p</b></div><div class="row"><span>Ngồi liên tục${full?' (khoảng đã chọn)':' hôm nay'}</span><b>${Math.floor(sit/60)}g ${sit%60}p</b></div>`+(o.length?o.map(t=>`<div class="row"><label style="margin:0;color:var(--tx)"><input type="checkbox" ${t.done?'checked disabled':''} onchange="upd('tasks','${t.id}','done',true)"> ${esc(t.name)}</label><span class="${t.due&&t.due<todayS&&!t.done?'bad':'mut'}">${t.due||''}</span></div>`).join(''):'<span class="mut">Không có nhiệm vụ mở.</span>')},
+  stats:()=>[['Nhiệm vụ mở',db.tasks.filter(t=>!t.done).length],['Quá hạn',db.tasks.filter(t=>!t.done&&t.due&&t.due<todayS).length],['Màn hình trong khoảng (phút)',sum(db.screen.filter(r=>inRange(r.at)),'min')],['Ngồi liên tục trong khoảng (phút)',sum(db.sitting.filter(r=>inRange(r.at)),'min')]],
+  chart:()=>{const days=datesInRange(curRange.from,curRange.to);const d=days.map(d=>sum(db.screen.filter(r=>dstr(r.at)===d),'min'));const sit=days.map(d=>sum(db.sitting.filter(r=>dstr(r.at)===d),'min'));
+   const done=db.tasks.filter(t=>t.done).length,open=db.tasks.filter(t=>!t.done).length;
+   const donut=(done+open)?`<div class="chartcard" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div><h4 style="margin-bottom:10px">Nhiệm vụ: hoàn thành vs. mở</h4>${donutChart([{v:done,c:PALETTE[1]},{v:open,c:PALETTE[0]}],130)}</div>${legend([[PALETTE[1],'Hoàn thành ('+done+')'],[PALETTE[0],'Đang mở ('+open+')']])}</div>`:'';
+   return `<div class="chartcard"><h4>Thời gian màn hình theo ngày</h4><div class="chart-wrap">${miniBar(d,PALETTE[0])}</div></div><div class="chartcard"><h4>Thời gian ngồi liên tục theo ngày</h4><div class="chart-wrap">${miniBar(sit,PALETTE[3])}</div></div>`+donut}},
+ {id:'m6',t:'06. Tài chính cá nhân',s:'Thu chi, ngân sách, tài sản',c:['tx'],
+  mini:()=>{const mo=todayS.slice(0,7),mt=db.tx.filter(r=>dstr(r.at).startsWith(mo));const t=sum(mt.filter(r=>r.kind==='Thu'),'amount'),c=sum(mt.filter(r=>r.kind==='Chi'),'amount');return(t+c)?donutChart([{v:t,c:PALETTE[1]},{v:c,c:PALETTE[2]}],112):'';},
+  v:(full)=>{const src=full?db.tx.filter(r=>inRange(r.at)):db.tx;const mo=todayS.slice(0,7),mt=db.tx.filter(r=>dstr(r.at).startsWith(mo));
+   const t=a=>sum(a.filter(r=>r.kind==='Thu'),'amount'),c=a=>sum(a.filter(r=>r.kind==='Chi'),'amount');
+   return `<div class="mut">Số dư toàn bộ (thu − chi)</div><div class="big ${t(db.tx)-c(db.tx)<0?'bad':''}">${vnd(t(db.tx)-c(db.tx))}</div><div class="row"><span>Thu tháng này</span><b class="ok">${vnd(t(mt))}</b></div><div class="row"><span>Chi tháng này</span><b class="bad">${vnd(c(mt))}</b></div>`+(full?src.slice().reverse().map(r=>`<div class="mut">${F.tx.fmt(r)}</div>`).join(''):'')},
+  stats:()=>{const a=db.tx.filter(r=>inRange(r.at));const t=sum(a.filter(r=>r.kind==='Thu'),'amount'),c=sum(a.filter(r=>r.kind==='Chi'),'amount');return[['Thu trong khoảng',vnd(t)],['Chi trong khoảng',vnd(c)],['Dòng tiền ròng',vnd(t-c)]]},
+  chart:()=>{const days=datesInRange(curRange.from,curRange.to);const d=days.map(d=>{const r=db.tx.filter(r=>dstr(r.at)===d);return sum(r.filter(x=>x.kind==='Thu'),'amount')-sum(r.filter(x=>x.kind==='Chi'),'amount')});
+   const cats={};db.tx.filter(r=>r.kind==='Chi'&&inRange(r.at)).forEach(r=>{cats[r.cat]=(cats[r.cat]||0)+ +r.amount});
+   const entries=Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6);
+   const pie=entries.length?`<div class="chartcard" style="display:flex;gap:16px;align-items:center;flex-wrap:wrap"><div><h4 style="margin-bottom:10px">Chi tiêu theo danh mục</h4>${donutChart(entries.map(([c,v],i)=>({v,c:PALETTE[i%PALETTE.length]})),140)}</div>${legend(entries.map(([c,v],i)=>[PALETTE[i%PALETTE.length],c+' ('+vnd(v)+')']))}</div>`:'<div class="mut">Chưa có chi tiêu trong khoảng đã chọn.</div>';
+   return `<div class="chartcard"><h4>Dòng tiền ròng theo ngày</h4><div class="chart-wrap">${miniBar(d.map(v=>Math.abs(v)),PALETTE[0])}</div></div>`+pie}}
+];
+function groupByType(){const g={};db.health.forEach(r=>{(g[r.type]=g[r.type]||[]).push(r)});return g}
+function pct(g){return g.target>0?Math.min(100,Math.round((+g.current||0)/g.target*100)):0}
+function upd(c,id,k,v){const r=db[c].find(x=>x.id===id);if(r){r[k]=k==='current'?+v:v;if(c==='tasks'&&k==='done')r.doneAt=iso(new Date());save();render();if($('detail').classList.contains('on'))openDetail(curDetail)}}
+
+function render(){
+ $('grid').innerHTML=M.map(m=>`<section class="card" onclick="openDetail('${m.id}')"><h2>${m.t}</h2><div class="sub">${m.s}</div><div class="chart-wrap">${m.mini()}</div><div class="body">${m.v(false)}</div><div class="acts"><button class="p" onclick="event.stopPropagation();openAdd('${m.id}')">+ Thêm dữ liệu</button>${m.quickAdd?`<button onclick="event.stopPropagation();openQuickMeal()">📝 Nhập mô tả</button>`:''}<button onclick="event.stopPropagation();openDetail('${m.id}')">Chi tiết</button></div></section>`).join('');
+ const al=[];
+ db.tasks.filter(t=>!t.done&&t.due&&t.due<todayS).forEach(t=>al.push(`Nhiệm vụ quá hạn: ${esc(t.name)} (hạn ${t.due}) → hoàn thành hoặc dời hạn.`));
+ db.goals.filter(g=>pct(g)<100&&g.due<todayS).forEach(g=>al.push(`Mục tiêu trễ hạn: ${esc(g.name)} → xem lại kế hoạch.`));
+ if(!db.moods.some(isToday))al.push('Chưa có check-in tâm trạng hôm nay (có thể bỏ qua).');
+ $('alerts').innerHTML=al.map(a=>`<div class="al">⚠ ${a}</div>`).join('');
+}
+const mod=id=>M.find(m=>m.id===id);
+let curDetail=null;
+function openDetail(id){
+ if(curDetail!==id)curRange={from:todayS,to:todayS};
+ curDetail=id;const m=mod(id);
+ $('dtitle').textContent=m.t;$('dsub').textContent=m.s;
+ const stats=m.stats?m.stats():[];
+ $('dbody').innerHTML=
+  (m.noRange?'':rangeBarHTML())
+  +`<div class="dgrid">${stats.map(([l,v])=>`<div class="stat"><div class="l">${esc(l)}</div><div class="v">${esc(v)}</div></div>`).join('')}</div>`
+  +(m.chart?m.chart():'')
+  +`<div class="dgrid" style="grid-template-columns:1fr"><div>${m.v(true)}</div></div>`
+  +`<div class="acts" style="max-width:420px"><button class="p" onclick="openAdd('${id}')">+ Thêm dữ liệu</button>${m.quickAdd?`<button onclick="openQuickMeal()">📝 Nhập mô tả (tự tính kcal)</button>`:''}</div>`;
+ $('detail').classList.add('on');
+}
+function closeDetail(){$('detail').classList.remove('on');render()}
+function openBox(h){$('box').innerHTML=h;$('modal').classList.add('on')}
+function closeBox(){$('modal').classList.remove('on')}
+$('modal').addEventListener('click',e=>{if(e.target.id==='modal')closeBox()});
+function openAdd(id,sel){
+ const m=mod(id);const c=sel||m.c[0];
+ const sw=m.c.length>1?`<div><label>Loại bản ghi</label><select onchange="openAdd('${id}',this.value)">${m.c.map(k=>`<option value="${k}" ${k===c?'selected':''}>${F[k].label}</option>`).join('')}</select></div>`:'';
+ const fs=F[c].f.map(([k,l,t,req,opt])=>`<div><label>${l}${req?' *':''}</label>${t==='select'?`<select name="${k}">${opt.map(o=>`<option>${o}</option>`).join('')}</select>`:t==='textarea'?`<textarea name="${k}" rows="3" ${req?'required':''}></textarea>`:`<input name="${k}" type="${t}" ${req?'required':''} step="any">`}</div>`).join('');
+ openBox(`<h3>${F[c].label}</h3>${sw}<div id="ff">${fs}</div><div class="row"><button onclick="closeBox()">Hủy</button><button class="p" onclick="submitAdd('${c}')">Lưu</button></div>`);
+}
+function submitAdd(c){
+ const r={id:rid(),at:iso(new Date())};
+ let ok=true;
+ F[c].f.forEach(([k,l,t,req])=>{const el=document.querySelector(`#ff [name=${k}]`);let v=el.value.trim();
+  if(req&&!v){ok=false;el.style.borderColor='var(--bad)'}
+  r[k]=t==='number'&&v!==''?+v:v});
+ if(!ok)return;
+ if(c==='tx'&&!(r.amount>0)){alert('Số tiền phải là số dương');return}
+ if(c==='goals'&&r.due<todayS){alert('Ngày kết thúc phải từ hôm nay trở đi');return}
+ if(c==='tasks')r.done=false;
+ db[c].push(r);save();closeBox();render();
+ if($('detail').classList.contains('on'))openDetail(curDetail);
+}
+function del(c,id){if(!confirm('Xóa bản ghi này?'))return;db[c]=db[c].filter(r=>r.id!==id);save();render();if($('detail').classList.contains('on'))openDetail(curDetail)}
+function backup(){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(db,null,1)],{type:'application/json'}));a.download='dmbook-'+todayS+'.json';a.click()}
+$('imp').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const rd=new FileReader();
+ rd.onload=()=>{try{
+  const d=JSON.parse(rd.result);let added=0;
+  Object.keys(db).forEach(c=>{if(!Array.isArray(d[c]))return;const have=new Set(db[c].map(r=>r.id));
+   d[c].forEach(r=>{if(r&&r.id&&!have.has(r.id)){db[c].push(r);have.add(r.id);added++}})});
+  save();render();alert('Đã gộp '+added+' bản ghi mới từ tệp sao lưu.');
+ }catch(x){alert('Tệp không hợp lệ')}};
+ rd.readAsText(f);e.target.value='';
+});
+render();
+</script>
+</body>
+</html>
